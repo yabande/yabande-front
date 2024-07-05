@@ -3,45 +3,33 @@ import reactLogo from "./assets/react.svg";
 import "./App.css";
 import { PencilSquareIcon, TrashIcon } from "@heroicons/react/16/solid";
 import axios from "axios";
-
-enum TrackingType {
-  "Page",
-  "Stock",
-}
-
-type Tracking = {
-  id: number | string;
-  title: string;
-  url: string;
-  type: TrackingType;
-  user: string;
-};
+import { getAllTrackings, saveTracking, deleteTracking } from "./db";
+import { Tracking, TrackingType } from "./types";
 
 function App() {
   const [user, setUser] = useState("");
-  const [uuid, setUuid] = useState("");
   const [trackings, setTrackings] = useState<Tracking[]>([]);
 
   useEffect(() => {
-    // Fetch trackings from the backend when the component mounts
-    async function fetchTrackings() {
+    const fetchData = async () => {
       try {
-        const response = await axios.get("http://localhost:3021/api/trackings");
-        setTrackings(response.data);
+        const data = await getAllTrackings(); // Fetch trackings from the database
+        setTrackings(data); // Update the state with fetched trackings
       } catch (error) {
-        console.error("Error fetching data:", error);
+        alert(`Error fetching trackings: ${error.message}`);
       }
-    }
-    fetchTrackings();
+    };
+
+    fetchData();
   }, []);
 
   async function newWatch(event) {
     event.preventDefault();
     const formData = new FormData(event.target);
-    const title = formData.get("title");
-    const url = formData.get("url");
-    const track_mode = formData.get("track_mode");
-    const user = formData.get("user");
+    const title = formData.get("title") as string;
+    const url = formData.get("url") as string;
+    const track_mode = formData.get("track_mode") as string;
+    const user = formData.get("user") as string;
 
     const requestBody = {
       url: url,
@@ -51,30 +39,27 @@ function App() {
     };
 
     try {
-      const response = await axios.post(
-        "https://izacc.ir/api/v1/watch",
-        requestBody,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            "x-api-key": "9be2e62f333ef5cd0cb8f29359435648",
-          },
-        }
-      );
+      const response = await axios.post("https://izacc.ir/api/v1/watch", requestBody, {
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-key": "9be2e62f333ef5cd0cb8f29359435648",
+        },
+      });
 
-      const newTracking = {
-        id: response.data["uuid"],
+      const newTracking: Tracking = {
+        id: response.data['uuid'],
         title: title,
         url: url,
         type: track_mode === "Stock" ? TrackingType.Stock : TrackingType.Page,
         user: user,
       };
 
+      // Save to the MongoDB database via the Express server
+      await saveTracking(newTracking);
 
       setTrackings([...trackings, newTracking]);
-      setUuid(response.data["uuid"]);
       setUser(user);
-      alert(`UUID: ${response.data["uuid"]}`);
+      alert(`UUID: ${response.data['uuid']}`);
     } catch (error) {
       alert(`Error: ${error}`);
     }
@@ -89,9 +74,11 @@ function App() {
         },
       });
 
+      // Remove from the MongoDB database via the Express server
+      await deleteTracking(uuid);
 
       // Remove the deleted tracking from the state
-      setTrackings(trackings.filter((tracking) => tracking.id !== uuid));
+      setTrackings(trackings.filter(tracking => tracking.id !== uuid));
       alert(`Tracking with UUID: ${uuid} has been deleted.`);
     } catch (error) {
       alert(`Error: ${error.message}`);
@@ -169,7 +156,11 @@ function App() {
             <div className="flex flex-col justify-start text-right">
               <p>
                 بررسی تغییرات هر{" "}
-                <input type="number" className="w-10 h-10 rounded-md" /> ساعت
+                <input
+                  type="number"
+                  className="w-10 h-10 rounded-md"
+                />{" "}
+                ساعت
               </p>
               <p>
                 <input type="checkbox" />
@@ -193,10 +184,7 @@ function App() {
               </div>
               <div className="flex">
                 <PencilSquareIcon width={16} />
-                <TrashIcon
-                  width={16}
-                  onClick={() => deleteWatch(tracking.id)}
-                />
+                <TrashIcon width={16} onClick={() => deleteWatch(tracking.id)} />
               </div>
             </li>
           ))}
