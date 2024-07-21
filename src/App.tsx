@@ -5,23 +5,35 @@ import { PencilSquareIcon, TrashIcon } from "@heroicons/react/16/solid";
 import axios from "axios";
 import { getAllTrackings, saveTracking, deleteTracking } from "./db";
 import { Tracking, TrackingType } from "./types";
+import Login from "./Login";
 
 function App() {
-  const [user, setUser] = useState("");
+  const [user, setUser] = useState(localStorage.getItem("username") || "");
   const [trackings, setTrackings] = useState<Tracking[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await getAllTrackings(); // Fetch trackings from the database
-        setTrackings(data); // Update the state with fetched trackings
+        const data = await getAllTrackings(user);
+        setTrackings(data);
       } catch (error) {
         alert(`Error fetching trackings: ${error.message}`);
       }
     };
 
-    fetchData();
-  }, []);
+    if (user) fetchData();
+  }, [user]);
+
+  const handleLogin = (username) => {
+    setUser(username);
+    localStorage.setItem("username", username);
+  };
+
+  const handleLogout = () => {
+    setUser("");
+    localStorage.removeItem("username");
+    localStorage.removeItem("token");
+  };
 
   async function newWatch(event) {
     event.preventDefault();
@@ -29,13 +41,12 @@ function App() {
     const title = formData.get("title") as string;
     const url = formData.get("url") as string;
     const track_mode = formData.get("track_mode") as string;
-    const user = formData.get("user") as string;
 
     const requestBody = {
       url: url,
       tag: title,
       processor: track_mode === "Stock" ? "restock_diff" : "page_diff",
-      user: user,
+      user: user, // Automatically set the user
     };
 
     try {
@@ -47,19 +58,17 @@ function App() {
       });
 
       const newTracking: Tracking = {
-        id: response.data['uuid'],
+        id: response.data["uuid"],
         title: title,
         url: url,
         type: track_mode === "Stock" ? TrackingType.Stock : TrackingType.Page,
         user: user,
       };
 
-      // Save to the MongoDB database via the Express server
       await saveTracking(newTracking);
 
       setTrackings([...trackings, newTracking]);
-      setUser(user);
-      alert(`UUID: ${response.data['uuid']}`);
+      alert(`UUID: ${response.data["uuid"]}`);
     } catch (error) {
       alert(`Error: ${error}`);
     }
@@ -74,23 +83,28 @@ function App() {
         },
       });
 
-      // Remove from the MongoDB database via the Express server
       await deleteTracking(uuid);
 
-      // Remove the deleted tracking from the state
-      setTrackings(trackings.filter(tracking => tracking.id !== uuid));
+      setTrackings(trackings.filter((tracking) => tracking.id !== uuid));
       alert(`Tracking with UUID: ${uuid} has been deleted.`);
     } catch (error) {
       alert(`Error: ${error.message}`);
     }
   }
 
+  if (!user) {
+    return <Login onLogin={handleLogin} />;
+  }
+
   return (
     <div className="container">
-      <div className="flex justify-center">
+      <div className="flex justify-between">
         <a href="https://react.dev" target="_blank">
           <img src={reactLogo} className="logo react" alt="React logo" />
         </a>
+        <button onClick={handleLogout} className="p-2 bg-red-500 text-white rounded-md">
+          خروج
+        </button>
       </div>
       <form onSubmit={newWatch}>
         <h1>تغییریاب</h1>
@@ -115,16 +129,6 @@ function App() {
               type="url"
             />
           </div>
-          <div className="input_group">
-            <label htmlFor="user">کاربر</label>
-            <input
-              name="user"
-              id="user"
-              className="p-2 rounded-md"
-              placeholder="Username"
-              type="text"
-            />
-          </div>
           <div className="flex flex-row gap-4 justify-start">
             <div className="flex flex-col gap-2">
               <div className="flex gap-1">
@@ -146,7 +150,9 @@ function App() {
                 <label htmlFor="track_mode">رهگیری تغییرات صفحه</label>
               </div>
             </div>
-            <button type="submit">رهگیری</button>
+            <button type="submit" className="p-2 bg-blue-500 text-white rounded-md">
+              رهگیری
+            </button>
           </div>
           <div className="bg-slate-800 p-4 rounded-md">
             <div className="flex">
@@ -156,10 +162,7 @@ function App() {
             <div className="flex flex-col justify-start text-right">
               <p>
                 بررسی تغییرات هر{" "}
-                <input
-                  type="number"
-                  className="w-10 h-10 rounded-md"
-                />{" "}
+                <input type="number" className="w-10 h-10 rounded-md" />{" "}
                 ساعت
               </p>
               <p>
