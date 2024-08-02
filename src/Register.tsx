@@ -1,14 +1,11 @@
-// src/Login.tsx
+// src/Register.tsx
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "./App.css";
 
-interface LoginProps {
-    onLogin: (username: string) => void;
-}
-
-const Login: React.FC<LoginProps> = ({ onLogin }) => {
+const Register: React.FC = () => {
+    const [email, setEmail] = useState<string>("");
     const [username, setUsername] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     const navigate = useNavigate();
@@ -16,27 +13,43 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
         try {
-            const response = await axios.post("http://localhost:5001/api/v1/user/login", {
+            const response = await axios.post("http://localhost:5001/api/v1/user/register", {
+                email,
                 username,
                 password,
             });
-            localStorage.setItem("token", response.data.token);
-            onLogin(username);
-            navigate("/");
+            if (response.status === 201) {
+                alert("User registered successfully");
+                navigate("/login");
+            } else {
+                alert(`Failed to register user 1 ${response.status}`);
+            }
         } catch (error) {
-            alert("Invalid credentials");
+            alert(`Failed to register user ${error}`);
         }
     };
 
-    const handleRegisterRedirect = () => {
-        navigate("/register");
+    const handleLoginRedirect = () => {
+        navigate("/");
     };
 
     return (
         <div className="container">
             <form onSubmit={handleSubmit}>
-                <h1>ورود</h1>
+                <h1>ثبت نام</h1>
                 <div className="flex flex-col justify-start gap-4 my-6">
+                    <div className="input_group">
+                        <label htmlFor="email">ایمیل</label>
+                        <input
+                            name="email"
+                            id="email"
+                            className="p-2 rounded-md"
+                            placeholder="Email"
+                            type="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                        />
+                    </div>
                     <div className="input_group">
                         <label htmlFor="username">نام کاربری</label>
                         <input
@@ -62,19 +75,17 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
                         />
                     </div>
                     <button type="submit" className="p-2 bg-blue-500 text-white rounded-md">
-                        ورود
+                        ثبت نام
                     </button>
                     <button
                         type="button"
-                        onClick={handleRegisterRedirect}
+                        onClick={handleLoginRedirect}
                         className="p-2 bg-gray-500 text-white rounded-md mt-2"
-                    >
-                        ثبت نام
-                    </button>
+                    >ورود</button>
                 </div>
             </form>
         </div>
     );
 };
 
-export default Login;
+export default Register;
