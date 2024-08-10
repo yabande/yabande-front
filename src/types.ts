@@ -1,6 +1,6 @@
 export enum TrackingType {
-  Stock = 'Stock',
-  Page = 'Page',
+  Stock = "Stock",
+  Page = "Page",
 }
 
 export type Tracking = {

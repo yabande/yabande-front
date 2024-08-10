@@ -1,14 +1,14 @@
 // src/db.ts
-import axios from 'axios';
-import { Tracking } from './types';
+import axios from "axios";
+import { Tracking } from "./types";
 
-const API_URL = 'http://localhost:5001/api/trackings';
+const API_URL = "http://localhost:5001/api/trackings";
 
 function getAuthHeaders() {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem("token");
   return {
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
   };
@@ -26,11 +26,11 @@ export async function getAllTrackings(username: string): Promise<Tracking[]> {
   try {
     const response = await axios.get(
       `${API_URL}/${username}`,
-      getAuthHeaders()
+      getAuthHeaders(),
     );
     return response.data;
   } catch (error) {
-    console.error('Error fetching trackings:', error);
+    console.error("Error fetching trackings:", error);
     return [];
   }
 }
