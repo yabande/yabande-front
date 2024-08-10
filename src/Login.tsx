@@ -35,6 +35,10 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
     navigate("/register");
   };
 
+  const handleResetPasswordRedirect = () => {
+    navigate("/reset-password");
+  };
+
   return (
     <div className='container'>
       <form onSubmit={handleSubmit}>
@@ -69,6 +73,12 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
             className='p-2 bg-blue-500 text-white rounded-md'
           >
             ورود
+          </button>
+          <button
+            type='button'
+            onClick={handleResetPasswordRedirect}
+            className='p-2 bg-gray-500 text-white rounded-md mt-2'>
+            بازیابی رمز عبور
           </button>
           <button
             type='button'

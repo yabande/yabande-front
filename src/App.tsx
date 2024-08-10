@@ -14,6 +14,7 @@ import {
   Routes,
   Navigate,
 } from "react-router-dom";
+import ResetPassword from "./Reset";
 
 function App() {
   const [user, setUser] = useState(localStorage.getItem("username") || "");
@@ -114,6 +115,10 @@ function App() {
         <Route
           path='/register'
           element={user ? <Navigate to='/' /> : <Register />}
+        />
+        <Route
+          path='/reset-password'
+          element={user ? <Navigate to='/' /> : <ResetPassword />}
         />
         <Route
           path='/'
