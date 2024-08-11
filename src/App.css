@@ -11,20 +11,22 @@
   will-change: filter;
   transition: filter 300ms;
 }
+
 .logo:hover {
   filter: drop-shadow(0 0 2em #646cffaa);
 }
+
 .logo.react:hover {
   filter: drop-shadow(0 0 2em #61dafbaa);
 }
 
+input#username,
+input#password {
+  direction: ltr;
+}
+
 .input_group {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  text-align: right;
-  margin: 0 auto;
-  width: 100%;
+  @apply flex flex-col gap-2 text-right mx-auto my-0 w-full;
 }
 
 .tracking_list {
@@ -49,6 +51,7 @@
   text-align: right;
   width: 100%;
 }
+
 .tracking_item span {
   font-size: 14px;
 }
@@ -57,6 +60,7 @@
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
@@ -74,9 +78,11 @@
     padding: 1rem;
     max-width: 90%;
   }
+
   .tracking_list {
     width: 100%;
   }
+
   .input_group {
     width: 100%;
   }

@@ -2,7 +2,7 @@
 import axios from "axios";
 import { Tracking } from "./types";
 
-const API_URL = "http://localhost:5001/api/trackings";
+const API_URL = "http://localhost:5001/api/v1/trackings";
 
 function getAuthHeaders() {
   const token = localStorage.getItem("token");
@@ -23,14 +23,8 @@ export async function deleteTracking(id: number | string): Promise<void> {
 }
 
 export async function getAllTrackings(username: string): Promise<Tracking[]> {
-  try {
-    const response = await axios.get(
-      `${API_URL}/${username}`,
-      getAuthHeaders(),
-    );
-    return response.data;
-  } catch (error) {
-    console.error("Error fetching trackings:", error);
-    return [];
-  }
+  return await axios
+    .get(`${API_URL}/?username=${username}`, getAuthHeaders())
+    .then((response) => response.data)
+    .catch((error) => error);
 }

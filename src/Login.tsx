@@ -1,34 +1,40 @@
 // src/Login.tsx
-import React, { useState } from "react";
-import axios from "axios";
+import { useState, FormEvent, FC } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import "./App.css";
+import Popup from "./components/Popup";
 
 interface LoginProps {
   onLogin: (username: string) => void;
 }
 
-const Login: React.FC<LoginProps> = ({ onLogin }) => {
+const Login: FC<LoginProps> = ({ onLogin }) => {
+  const [message, setMessage] = useState<string>("");
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const navigate = useNavigate();
 
-  const handleSubmit = async (event: React.FormEvent) => {
+  const throwNewMessage = (_message: string) => {
+    setMessage(_message);
+    setTimeout(() => setMessage(""), 5000);
+  };
+
+  const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
-    try {
-      const response = await axios.post(
-        "http://localhost:5001/api/v1/user/login",
-        {
-          username,
-          password,
-        },
-      );
-      localStorage.setItem("token", response.data.token);
-      onLogin(username);
-      navigate("/");
-    } catch (error) {
-      alert("Invalid credentials");
-    }
+    await axios
+      .post("http://localhost:5001/api/v1/user/login", {
+        username,
+        password,
+      })
+      .then((response) => {
+        localStorage.setItem("token", response.data.token);
+        onLogin(username);
+        navigate("/");
+      })
+      .catch((error) => {
+        throwNewMessage(error.message);
+      });
   };
 
   const handleRegisterRedirect = () => {
@@ -74,21 +80,25 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
           >
             ورود
           </button>
-          <button
-            type='button'
-            onClick={handleResetPasswordRedirect}
-            className='p-2 bg-gray-500 text-white rounded-md mt-2'>
-            بازیابی رمز عبور
-          </button>
-          <button
-            type='button'
-            onClick={handleRegisterRedirect}
-            className='p-2 bg-gray-500 text-white rounded-md mt-2'
-          >
-            ثبت نام
-          </button>
+          <div className='flex flex-row gap-3 justify-center'>
+            <button
+              type='button'
+              onClick={handleResetPasswordRedirect}
+              className='px-6 py-4 bg-gray-500 text-white rounded-md mt-2'
+            >
+              بازیابی رمز عبور
+            </button>
+            <button
+              type='button'
+              onClick={handleRegisterRedirect}
+              className='px-6 py-4 bg-gray-500 text-white rounded-md mt-2'
+            >
+              ثبت نام
+            </button>
+          </div>
         </div>
       </form>
+      {message && <Popup message={message} />}
     </div>
   );
 };

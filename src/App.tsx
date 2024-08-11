@@ -1,9 +1,8 @@
 // src/App.tsx
-import React, { useState, useEffect } from "react";
-import reactLogo from "./assets/react.svg";
+import { useState, useEffect, FormEvent } from "react";
 import "./App.css";
-import { PencilSquareIcon, TrashIcon } from "@heroicons/react/16/solid";
 import axios from "axios";
+import { PencilSquareIcon, TrashIcon } from "@heroicons/react/16/solid";
 import { getAllTrackings, saveTracking, deleteTracking } from "./db";
 import { Tracking, TrackingType } from "./types";
 import Login from "./Login";
@@ -15,23 +14,28 @@ import {
   Navigate,
 } from "react-router-dom";
 import ResetPassword from "./Reset";
+import Popup from "./components/Popup";
 
 function App() {
-  const [user, setUser] = useState(localStorage.getItem("username") || "");
+  const [message, setMessage] = useState<string>("");
+  const [user, setUser] = useState<string>(
+    localStorage.getItem("username") || "",
+  );
   const [trackings, setTrackings] = useState<Tracking[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const data = await getAllTrackings(user);
-        setTrackings(data);
-      } catch (error) {
-        alert(`Error fetching trackings: ${error.message}`);
-      }
+      getAllTrackings(user)
+        .then((_trackings) => setTrackings(_trackings))
+        .catch((error) => throwNewMessage(error));
     };
-
     if (user) fetchData();
   }, [user]);
+
+  const throwNewMessage = (_message: string) => {
+    setMessage(_message);
+    setTimeout(() => setMessage(""), 5000);
+  };
 
   const handleLogin = (username: string) => {
     setUser(username);
@@ -44,7 +48,7 @@ function App() {
     localStorage.removeItem("token");
   };
 
-  async function newWatch(event: React.FormEvent) {
+  async function newWatch(event: FormEvent) {
     event.preventDefault();
     const formData = new FormData(event.target as HTMLFormElement);
     const title = formData.get("title") as string;
@@ -81,9 +85,9 @@ function App() {
       await saveTracking(newTracking);
 
       setTrackings([...trackings, newTracking]);
-      alert(`UUID: ${response.data["uuid"]}`);
+      throwNewMessage(`UUID: ${response.data["uuid"]}`);
     } catch (error) {
-      alert(`Error: ${error}`);
+      throwNewMessage(`Error: ${error}`);
     }
   }
 
@@ -99,9 +103,9 @@ function App() {
       await deleteTracking(uuid);
 
       setTrackings(trackings.filter((tracking) => tracking.id !== uuid));
-      alert(`Tracking with UUID: ${uuid} has been deleted.`);
+      throwNewMessage(`Tracking with UUID: ${uuid} has been deleted.`);
     } catch (error) {
-      alert(`Error: ${error.message}`);
+      throwNewMessage(`Error: ${error}`);
     }
   }
 
@@ -126,20 +130,9 @@ function App() {
             user ? (
               <div className='container'>
                 <div className='flex justify-between'>
-                  <a
-                    href='https://react.dev'
-                    target='_blank'
-                    rel='noopener noreferrer'
-                  >
-                    <img
-                      src={reactLogo}
-                      className='logo react'
-                      alt='React logo'
-                    />
-                  </a>
                   <button
                     onClick={handleLogout}
-                    className='p-2 bg-red-500 text-white rounded-md'
+                    className='bg-red-500 text-white rounded-md'
                   >
                     خروج
                   </button>
@@ -224,30 +217,34 @@ function App() {
                 <div>
                   <h4>رهگیری ها</h4>
                   <ul className='tracking_list'>
-                    {trackings.map((tracking) => (
-                      <li key={tracking.id} className='tracking_item'>
-                        <div className='flex flex-col'>
-                          <p>
-                            <a href={tracking.url}>{tracking.title}</a>
-                          </p>
-                          <span>کاربر: {tracking.user}</span>{" "}
-                          {/* Display user */}
-                          <span>
-                            رهگیری به صورت {TrackingType[tracking.type]}
-                          </span>
-                        </div>
-                        <div className='flex'>
-                          <PencilSquareIcon width={16} />
-                          <TrashIcon
-                            width={16}
-                            onClick={() => deleteWatch(tracking.id)}
-                          />
-                        </div>
-                      </li>
-                    ))}
+                    {trackings.length &&
+                      trackings.map((tracking) => (
+                        <li key={tracking.id} className='tracking_item'>
+                          <div className='flex flex-col'>
+                            <p>
+                              <a href={tracking.url}>{tracking.title}</a>
+                            </p>
+                            <span>کاربر: {tracking.user}</span>{" "}
+                            {/* Display user */}
+                            <span>
+                              رهگیری به صورت {TrackingType[tracking.type]}
+                            </span>
+                          </div>
+                          <div className='flex'>
+                            <PencilSquareIcon width={16} />
+                            <TrashIcon
+                              width={16}
+                              onClick={() =>
+                                deleteWatch(tracking.id.toString())
+                              }
+                            />
+                          </div>
+                        </li>
+                      ))}
                   </ul>
                 </div>
                 <p className='underline'>تمامی حقوق محفوظ است!</p>
+                {message != undefined && <Popup message={message} />}
               </div>
             ) : (
               <Navigate to='/login' />
