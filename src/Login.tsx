@@ -1,23 +1,23 @@
 // src/Login.tsx
-import { useState, FormEvent, FC } from "react";
-import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { FC, FormEvent, useContext, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./App.css";
-import Popup from "./components/Popup";
+import { IMessageState, MessageContext } from "./contexts/MessageContext";
 
 interface LoginProps {
-  onLogin: (username: string) => void;
+  setUser: (username: string) => void;
 }
 
-const Login: FC<LoginProps> = ({ onLogin }) => {
-  const [message, setMessage] = useState<string>("");
+const Login: FC<LoginProps> = ({ setUser }) => {
+  const { throwNewMessage } = useContext(MessageContext) as IMessageState;
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const navigate = useNavigate();
 
-  const throwNewMessage = (_message: string) => {
-    setMessage(_message);
-    setTimeout(() => setMessage(""), 5000);
+  const handleLogin = (username: string) => {
+    setUser(username);
+    localStorage.setItem("username", username);
   };
 
   const handleSubmit = async (event: FormEvent) => {
@@ -29,7 +29,7 @@ const Login: FC<LoginProps> = ({ onLogin }) => {
       })
       .then((response) => {
         localStorage.setItem("token", response.data.token);
-        onLogin(username);
+        handleLogin(username);
         navigate("/");
       })
       .catch((error) => {
@@ -98,7 +98,6 @@ const Login: FC<LoginProps> = ({ onLogin }) => {
           </div>
         </div>
       </form>
-      {message && <Popup message={message} />}
     </div>
   );
 };

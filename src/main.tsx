@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App.tsx";
+import ContextWrapper from "./contexts/ContextWrapper.tsx";
 import "./index.css";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
@@ -15,6 +16,8 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
       href='https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100..900&display=swap'
       rel='stylesheet'
     ></link>
-    <App />
+    <ContextWrapper>
+      <App />
+    </ContextWrapper>
   </React.StrictMode>,
 );
