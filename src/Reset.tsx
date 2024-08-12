@@ -1,53 +1,55 @@
 // src/ResetPassword.tsx
 import axios from "axios";
-import React, { useState } from "react";
+import { FormEvent, useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./App.css";
+import { IMessageState, MessageContext } from "./contexts/MessageContext";
 
-const ResetPassword: React.FC = () => {
+function ResetPassword() {
+  const { throwNewMessage } = useContext(MessageContext) as IMessageState;
   const [username, setUsername] = useState<string>("");
   const [otp, setOtp] = useState<string>("");
   const [newPassword, setNewPassword] = useState<string>("");
   const [step, setStep] = useState<number>(1);
   const navigate = useNavigate();
 
-  const handleSendOtp = async (event: React.FormEvent) => {
+  async function handleSendOtp(event: FormEvent) {
     event.preventDefault();
-    try {
-      const response = await axios.post(
-        "http://localhost:5001/api/v1/user/reset",
-        { username },
-      );
+    await axios
+      .post("http://localhost:5001/api/v1/user/reset", { username })
+      .then((response) => {
+        if (response.data.error) {
+          throwNewMessage(response.data.error[0]);
+        } else {
+          throwNewMessage("OTP sent successfully");
+          setStep(2);
+        }
+      })
+      .catch((error) => {
+        throwNewMessage(`Failed to send OTP: ${error}`);
+      });
+  }
 
-      if (response.data.error) {
-        alert(response.data.error[0]);
-      } else {
-        alert("OTP sent successfully");
-        setStep(2);
-      }
-    } catch (error) {
-      alert(`Failed to send OTP: ${error}`);
-    }
-  };
-
-  const handleConfirmReset = async (event: React.FormEvent) => {
+  async function handleConfirmReset(event: FormEvent) {
     event.preventDefault();
-    try {
-      const response = await axios.post(
-        "http://localhost:5001/api/v1/user/process-reset",
-        { username, otp, newPassword },
-      );
-
-      if (response.status === 200) {
-        alert("Password reset successfully");
-        navigate("/login");
-      } else {
-        alert(`Failed to reset password: ${response.status}`);
-      }
-    } catch (error) {
-      alert(`Failed to reset password: ${error}`);
-    }
-  };
+    await axios
+      .post("http://localhost:5001/api/v1/user/process-reset", {
+        username,
+        otp,
+        newPassword,
+      })
+      .then((response) => {
+        if (response.status === 200) {
+          throwNewMessage("Password reset successfully");
+          navigate("/login");
+        } else {
+          throwNewMessage(`Failed to reset password: ${response.status}`);
+        }
+      })
+      .catch((error) => {
+        throwNewMessage(`Failed to reset password: ${error}`);
+      });
+  }
 
   return (
     <div className='container'>
@@ -104,6 +106,6 @@ const ResetPassword: React.FC = () => {
       </form>
     </div>
   );
-};
+}
 
 export default ResetPassword;

@@ -7,22 +7,15 @@ import {
   Routes,
 } from "react-router-dom";
 import "./App.css";
+import MessageWrapper from "./components/MessageWrapper";
+import { IUserState, UserContext } from "./contexts/UserContext";
+import Dashboard from "./Dashboard";
 import Login from "./Login";
 import Register from "./Register";
 import ResetPassword from "./Reset";
-import MessageWrapper from "./components/MessageWrapper";
-import NewTrackingForm from "./components/NewTrackingForm";
-import TrackingsList from "./components/TrackingsList";
-import { IUserState, UserContext } from "./contexts/UserContext";
 
 function App() {
-  const { user, setUser } = useContext(UserContext) as IUserState;
-
-  const handleLogout = () => {
-    setUser("");
-    localStorage.removeItem("username");
-    localStorage.removeItem("token");
-  };
+  const { user } = useContext(UserContext) as IUserState;
 
   return (
     <MessageWrapper>
@@ -30,7 +23,7 @@ function App() {
         <Routes>
           <Route
             path='/login'
-            element={user ? <Navigate to='/' /> : <Login setUser={setUser} />}
+            element={user ? <Navigate to='/' /> : <Login />}
           />
           <Route
             path='/register'
@@ -42,25 +35,7 @@ function App() {
           />
           <Route
             path='/'
-            element={
-              user ? (
-                <div className='container'>
-                  <div className='flex justify-between'>
-                    <button
-                      onClick={handleLogout}
-                      className='rounded-md bg-red-500 text-white'
-                    >
-                      خروج
-                    </button>
-                  </div>
-                  <NewTrackingForm />
-                  <TrackingsList />
-                  <p className='underline'>تمامی حقوق محفوظ است!</p>
-                </div>
-              ) : (
-                <Navigate to='/login' />
-              )
-            }
+            element={user ? <Dashboard /> : <Navigate to='/login' />}
           />
         </Routes>
       </Router>

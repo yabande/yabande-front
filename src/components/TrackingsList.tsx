@@ -7,8 +7,8 @@ import {
   TrackingsContext,
 } from "../contexts/TrackingsContext";
 import { IUserState, UserContext } from "../contexts/UserContext";
-import { deleteTracking, getAllTrackings } from "../db";
-import { TrackingType } from "../types";
+import { deleteTracking, getAllTrackings } from "../utils/db";
+import { TrackingType } from "../utils/types";
 
 function TrackingsList() {
   const { user } = useContext(UserContext) as IUserState;
@@ -27,21 +27,24 @@ function TrackingsList() {
   }, [setTrackings, throwNewMessage, user]);
 
   async function deleteWatch(uuid: string) {
-    try {
-      await axios.delete(`https://izacc.ir/api/v1/watch/${uuid}`, {
+    await axios
+      .delete(`https://izacc.ir/api/v1/watch/${uuid}`, {
         headers: {
           "Content-Type": "application/json",
           "x-api-key": "9be2e62f333ef5cd0cb8f29359435648",
         },
+      })
+      .then(async (response) => {
+        console.log(response);
+
+        await deleteTracking(uuid);
+
+        setTrackings(trackings.filter((tracking) => tracking.id !== uuid));
+        throwNewMessage(`Tracking with UUID: ${uuid} has been deleted.`);
+      })
+      .catch((error) => {
+        throwNewMessage(`Error: ${error}`);
       });
-
-      await deleteTracking(uuid);
-
-      setTrackings(trackings.filter((tracking) => tracking.id !== uuid));
-      throwNewMessage(`Tracking with UUID: ${uuid} has been deleted.`);
-    } catch (error) {
-      throwNewMessage(`Error: ${error}`);
-    }
   }
   return (
     <div id='trackings-list'>

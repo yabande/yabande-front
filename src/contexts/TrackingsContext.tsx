@@ -1,5 +1,5 @@
 import { createContext, Dispatch, SetStateAction, useState } from "react";
-import { Tracking } from "../types";
+import { Tracking } from "../utils/types";
 
 export type ITrackingsState = {
   trackings: Tracking[];

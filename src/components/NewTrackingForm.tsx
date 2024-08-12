@@ -6,8 +6,8 @@ import {
   TrackingsContext,
 } from "../contexts/TrackingsContext";
 import { IUserState, UserContext } from "../contexts/UserContext";
-import { saveTracking } from "../db";
-import { Tracking, TrackingType } from "../types";
+import { saveTracking } from "../utils/db";
+import { Tracking, TrackingType } from "../utils/types";
 
 function NewTrackingForm() {
   const { user } = useContext(UserContext) as IUserState;
@@ -30,33 +30,29 @@ function NewTrackingForm() {
       user: user, // Automatically set the user
     };
 
-    try {
-      const response = await axios.post(
-        "https://izacc.ir/api/v1/watch",
-        requestBody,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            "x-api-key": "9be2e62f333ef5cd0cb8f29359435648",
-          },
+    await axios
+      .post("https://izacc.ir/api/v1/watch", requestBody, {
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-key": "9be2e62f333ef5cd0cb8f29359435648",
         },
-      );
-
-      const newTracking: Tracking = {
-        id: response.data["uuid"],
-        title: title,
-        url: url,
-        type: track_mode === "Stock" ? TrackingType.Stock : TrackingType.Page,
-        user: user,
-      };
-
-      await saveTracking(newTracking);
-
-      setTrackings([...trackings, newTracking]);
-      throwNewMessage(`UUID: ${response.data["uuid"]}`);
-    } catch (error) {
-      throwNewMessage(`Error: ${error}`);
-    }
+      })
+      .then(async (response) => {
+        const newTracking: Tracking = {
+          id: response.data["uuid"],
+          title: title,
+          url: url,
+          type: track_mode === "Stock" ? TrackingType.Stock : TrackingType.Page,
+          user: user,
+        };
+        await saveTracking(newTracking).then(() => {
+          setTrackings([...trackings, newTracking]);
+          throwNewMessage(`UUID: ${response.data["uuid"]}`);
+        });
+      })
+      .catch((error) => {
+        throwNewMessage(`Error: ${error}`);
+      });
   }
   return (
     <form onSubmit={newWatch}>

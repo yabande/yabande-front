@@ -1,26 +1,24 @@
 // src/Login.tsx
 import axios from "axios";
-import { FC, FormEvent, useContext, useState } from "react";
+import { FormEvent, useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./App.css";
 import { IMessageState, MessageContext } from "./contexts/MessageContext";
+import { IUserState, UserContext } from "./contexts/UserContext";
 
-interface LoginProps {
-  setUser: (username: string) => void;
-}
-
-const Login: FC<LoginProps> = ({ setUser }) => {
+function Login() {
+  const { setUser } = useContext(UserContext) as IUserState;
   const { throwNewMessage } = useContext(MessageContext) as IMessageState;
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const navigate = useNavigate();
 
-  const handleLogin = (username: string) => {
+  function handleLogin(username: string) {
     setUser(username);
     localStorage.setItem("username", username);
-  };
+  }
 
-  const handleSubmit = async (event: FormEvent) => {
+  async function handleSubmit(event: FormEvent) {
     event.preventDefault();
     await axios
       .post("http://localhost:5001/api/v1/user/login", {
@@ -35,15 +33,15 @@ const Login: FC<LoginProps> = ({ setUser }) => {
       .catch((error) => {
         throwNewMessage(error.message);
       });
-  };
+  }
 
-  const handleRegisterRedirect = () => {
+  function handleRegisterRedirect() {
     navigate("/register");
-  };
+  }
 
-  const handleResetPasswordRedirect = () => {
+  function handleResetPasswordRedirect() {
     navigate("/reset-password");
-  };
+  }
 
   return (
     <div className='container'>
@@ -100,6 +98,6 @@ const Login: FC<LoginProps> = ({ setUser }) => {
       </form>
     </div>
   );
-};
+}
 
 export default Login;

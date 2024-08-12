@@ -1,40 +1,41 @@
 // src/Register.tsx
 import axios from "axios";
-import React, { useState } from "react";
+import { FormEvent, useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./App.css";
+import { IMessageState, MessageContext } from "./contexts/MessageContext";
 
-const Register: React.FC = () => {
+function Register() {
+  const { throwNewMessage } = useContext(MessageContext) as IMessageState;
   const [email, setEmail] = useState<string>("");
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const navigate = useNavigate();
 
-  const handleSubmit = async (event: React.FormEvent) => {
+  async function handleSubmit(event: FormEvent) {
     event.preventDefault();
-    try {
-      const response = await axios.post(
-        "http://localhost:5001/api/v1/user/register",
-        {
-          email,
-          username,
-          password,
-        },
-      );
-      if (response.status === 201) {
-        alert("User registered successfully");
-        navigate("/login");
-      } else {
-        alert(`Failed to register user 1 ${response.status}`);
-      }
-    } catch (error) {
-      alert(`Failed to register user ${error}`);
-    }
-  };
+    await axios
+      .post("http://localhost:5001/api/v1/user/register", {
+        email,
+        username,
+        password,
+      })
+      .then((response) => {
+        if (response.status === 201) {
+          throwNewMessage("User registered successfully");
+          navigate("/login");
+        } else {
+          throwNewMessage(`Failed to register user 1 ${response.status}`);
+        }
+      })
+      .catch((error) => {
+        throwNewMessage(`Failed to register user ${error}`);
+      });
+  }
 
-  const handleLoginRedirect = () => {
+  function handleLoginRedirect() {
     navigate("/");
-  };
+  }
 
   return (
     <div className='container'>
@@ -94,6 +95,6 @@ const Register: React.FC = () => {
       </form>
     </div>
   );
-};
+}
 
 export default Register;
