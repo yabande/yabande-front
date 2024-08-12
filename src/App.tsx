@@ -132,20 +132,20 @@ function App() {
                 <div className='flex justify-between'>
                   <button
                     onClick={handleLogout}
-                    className='bg-red-500 text-white rounded-md'
+                    className='rounded-md bg-red-500 text-white'
                   >
                     خروج
                   </button>
                 </div>
                 <form onSubmit={newWatch}>
                   <h1>تغییریاب</h1>
-                  <div className='flex flex-col justify-start gap-4 my-6'>
+                  <div className='my-6 flex flex-col justify-start gap-4'>
                     <div className='input_group'>
                       <label htmlFor='title'>نام یا عنوان</label>
                       <input
                         name='title'
                         id='title'
-                        className='p-2 rounded-md'
+                        className='rounded-md p-2'
                         placeholder='مکبوک M3 2020'
                         type='text'
                       />
@@ -155,12 +155,12 @@ function App() {
                       <input
                         name='url'
                         id='url'
-                        className='p-2 rounded-md'
+                        className='rounded-md p-2'
                         placeholder='https://digikala.com/'
                         type='url'
                       />
                     </div>
-                    <div className='flex flex-row gap-4 justify-start'>
+                    <div className='flex flex-row justify-start gap-4'>
                       <div className='flex flex-col gap-2'>
                         <div className='flex gap-1'>
                           <input
@@ -187,12 +187,12 @@ function App() {
                       </div>
                       <button
                         type='submit'
-                        className='p-2 bg-blue-500 text-white rounded-md'
+                        className='rounded-md bg-blue-500 p-2 text-white'
                       >
                         رهگیری
                       </button>
                     </div>
-                    <div className='bg-slate-800 p-4 rounded-md'>
+                    <div className='rounded-md bg-slate-800 p-4'>
                       <div className='flex'>
                         <h4>گزینه های پیشرفته</h4>
                         <span>{">"}</span>
@@ -202,7 +202,7 @@ function App() {
                           بررسی تغییرات هر{" "}
                           <input
                             type='number'
-                            className='w-10 h-10 rounded-md'
+                            className='h-10 w-10 rounded-md'
                           />{" "}
                           ساعت
                         </p>
@@ -244,7 +244,8 @@ function App() {
                   </ul>
                 </div>
                 <p className='underline'>تمامی حقوق محفوظ است!</p>
-                {message != undefined && <Popup message={message} />}
+                {message != undefined ||
+                  (message && <Popup message={message} />)}
               </div>
             ) : (
               <Navigate to='/login' />
