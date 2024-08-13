@@ -21,7 +21,7 @@ function Login() {
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
     await axios
-      .post("http://localhost:5001/api/v1/user/login", {
+      .post(`${import.meta.env.VITE_RELAY_URL}/api/v1/user/login`, {
         username,
         password,
       })
@@ -31,7 +31,7 @@ function Login() {
         navigate("/");
       })
       .catch((error) => {
-        throwNewMessage(error.message);
+        throwNewMessage(error.response.data.error);
       });
   }
 

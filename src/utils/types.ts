@@ -8,5 +8,5 @@ export type Tracking = {
   title: string;
   url: string;
   type: TrackingType;
-  user: string;
+  username: string;
 };
