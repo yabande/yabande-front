@@ -38,7 +38,7 @@ function NewTrackingForm() {
       })
       .then(async (response) => {
         const newTracking: Tracking = {
-          id: response.data._id,
+          _id: response.data._id,
           ...requestBody,
         };
         await saveTracking(newTracking).then(() => {
@@ -73,6 +73,7 @@ function NewTrackingForm() {
             className='rounded-md p-2'
             placeholder='https://digikala.com/'
             type='url'
+            pattern='https?://.+'
           />
         </div>
         <div className='flex flex-row justify-start gap-4'>

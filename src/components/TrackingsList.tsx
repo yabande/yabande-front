@@ -39,7 +39,7 @@ function TrackingsList() {
 
         await deleteTracking(uuid);
 
-        setTrackings(trackings.filter((tracking) => tracking.id !== uuid));
+        setTrackings(trackings.filter((tracking) => tracking._id !== uuid));
         throwNewMessage(`Tracking with UUID: ${uuid} has been deleted.`);
       })
       .catch((error) => {
@@ -52,12 +52,12 @@ function TrackingsList() {
       <ul className='tracking_list'>
         {trackings.length &&
           trackings.map((tracking) => (
-            <li key={tracking.id} className='tracking_item'>
+            <li key={tracking._id} className='tracking_item'>
               <div className='flex flex-col'>
                 <p>
                   <a href={tracking.url}>{tracking.title}</a>
                 </p>
-                <span>کاربر: {tracking.user}</span> {/* Display user */}
+                <span>کاربر: {tracking.username}</span> {/* Display user */}
                 <span>رهگیری به صورت {TrackingType[tracking.type]}</span>
               </div>
               <div className='flex'>
@@ -65,7 +65,7 @@ function TrackingsList() {
                 <TrashIcon
                   className='cursor-pointer'
                   width={16}
-                  onClick={() => deleteWatch(tracking.id.toString())}
+                  onClick={() => deleteWatch(tracking._id)}
                 />
               </div>
             </li>
