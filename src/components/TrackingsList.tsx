@@ -27,24 +27,9 @@ function TrackingsList() {
   }, [setTrackings, throwNewMessage, user]);
 
   async function deleteWatch(uuid: string) {
-    await axios
-      .delete(`https://izacc.ir/api/v1/watch/${uuid}`, {
-        headers: {
-          "Content-Type": "application/json",
-          "x-api-key": "9be2e62f333ef5cd0cb8f29359435648",
-        },
-      })
-      .then(async (response) => {
-        console.log(response);
-
-        await deleteTracking(uuid);
-
-        setTrackings(trackings.filter((tracking) => tracking._id !== uuid));
-        throwNewMessage(`Tracking with UUID: ${uuid} has been deleted.`);
-      })
-      .catch((error) => {
-        throwNewMessage(`Error: ${error}`);
-      });
+    await deleteTracking(uuid);
+    setTrackings(trackings.filter((tracking) => tracking._id !== uuid));
+    throwNewMessage(`Tracking with UUID: ${uuid} has been deleted.`);
   }
   return (
     <div id='trackings-list'>
