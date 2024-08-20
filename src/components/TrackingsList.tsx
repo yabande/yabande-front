@@ -1,5 +1,4 @@
 import { PencilSquareIcon, TrashIcon } from "@heroicons/react/16/solid";
-import axios from "axios";
 import { useContext, useEffect } from "react";
 import { IMessageState, MessageContext } from "../contexts/MessageContext";
 import {
@@ -26,10 +25,10 @@ function TrackingsList() {
     if (user) fetchData();
   }, [setTrackings, throwNewMessage, user]);
 
-  async function deleteWatch(uuid: string) {
-    await deleteTracking(uuid);
-    setTrackings(trackings.filter((tracking) => tracking._id !== uuid));
-    throwNewMessage(`Tracking with UUID: ${uuid} has been deleted.`);
+  async function deleteWatch(id: string) {
+    await deleteTracking(id);
+    setTrackings(trackings.filter((tracking) => tracking._id !== id));
+    throwNewMessage(`Tracking with ID: ${id} has been deleted.`);
   }
   return (
     <div id='trackings-list'>

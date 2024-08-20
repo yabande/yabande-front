@@ -15,7 +15,7 @@ function getAuthHeaders() {
 }
 
 export async function saveTracking(tracking: Tracking): Promise<void> {
-  await axios.post(API_URL, tracking, getAuthHeaders());
+  await axios.post(API_URL, tracking, getAuthHeaders())
 }
 
 export async function deleteTracking(id: number | string): Promise<void> {

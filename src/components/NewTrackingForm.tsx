@@ -6,7 +6,6 @@ import {
   TrackingsContext,
 } from "../contexts/TrackingsContext";
 import { IUserState, UserContext } from "../contexts/UserContext";
-import { saveTracking } from "../utils/db";
 import { Tracking, TrackingType } from "../utils/types";
 
 function NewTrackingForm() {
@@ -41,10 +40,8 @@ function NewTrackingForm() {
           _id: response.data._id,
           ...requestBody,
         };
-        await saveTracking(newTracking).then(() => {
-          setTrackings([...trackings, newTracking]);
-          throwNewMessage(`New tracking: ${response.data._id}`);
-        });
+        setTrackings([...trackings, newTracking]);
+        throwNewMessage(`New tracking: ${response.data._id}`);
       })
       .catch((e) => throwNewMessage(e.response.data.error));
   }
