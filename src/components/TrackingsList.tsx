@@ -1,4 +1,4 @@
-import { PencilSquareIcon, TrashIcon } from "@heroicons/react/16/solid";
+import { ArrowPathIcon, PencilSquareIcon, TrashIcon } from "@heroicons/react/16/solid";
 import { useContext, useEffect } from "react";
 import { IMessageState, MessageContext } from "../contexts/MessageContext";
 import {
@@ -37,15 +37,17 @@ function TrackingsList() {
         {trackings.length &&
           trackings.map((tracking) => (
             <li key={tracking._id} className='tracking_item'>
-              <div className='flex flex-col'>
-                <p>
+              <div className='flex flex-col gap-3'>
+                <p >
                   <a href={tracking.url}>{tracking.title}</a>
                 </p>
-                <span>کاربر: {tracking.username}</span> {/* Display user */}
-                <span>رهگیری به صورت {TrackingType[tracking.type]}</span>
+                <span>آخرین به روز رسانی: {`2022/2/2`}</span>
+                <span>نوع رهگیری: {TrackingType[tracking.type]}</span>
+                <span>وضعیت موجودی: {`ناموجود`}</span>
               </div>
-              <div className='flex'>
+              <div className='flex gap-3'>
                 <PencilSquareIcon width={16} />
+                <ArrowPathIcon width={16} />
                 <TrashIcon
                   className='cursor-pointer'
                   width={16}
