@@ -7,7 +7,7 @@ import {
 } from "../contexts/TrackingsContext";
 import { IUserState, UserContext } from "../contexts/UserContext";
 import { Tracking, TrackingType } from "../utils/types";
-import { ArrowPathIcon, ArrowDownIcon, ArrowRightIcon, ArrowLeftIcon } from "@heroicons/react/16/solid";
+import { ArrowLeftIcon } from "@heroicons/react/16/solid";
 
 function NewTrackingForm() {
   const { user } = useContext(UserContext) as IUserState;
@@ -28,6 +28,12 @@ function NewTrackingForm() {
       url,
       type: track_mode === "Stock" ? TrackingType.Stock : TrackingType.Page,
       username: user, // Automatically set the user
+      date_created: 0,
+      date_updated: 0,
+      date_changed: 0,
+      in_stock: false,
+      trigger_text: 'iddd',
+      time_between_checks: '2H'
     };
 
     await axios

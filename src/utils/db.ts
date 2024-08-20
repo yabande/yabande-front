@@ -18,6 +18,10 @@ export async function saveTracking(tracking: Tracking): Promise<void> {
   await axios.post(API_URL, tracking, getAuthHeaders())
 }
 
+// export async function checkTracking(id: number | string): Promise<void> {
+//   return;
+// }
+
 export async function deleteTracking(id: number | string): Promise<void> {
   await axios.delete(`${API_URL}/${id}`, getAuthHeaders());
 }

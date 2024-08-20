@@ -30,6 +30,9 @@ function TrackingsList() {
     setTrackings(trackings.filter((tracking) => tracking._id !== id));
     throwNewMessage(`Tracking with ID: ${id} has been deleted.`);
   }
+  // async function checkWatch(id: string) {
+  //   return;
+  // }
   return (
     <div id='trackings-list'>
       <h4>رهگیری ها</h4>
@@ -41,6 +44,7 @@ function TrackingsList() {
                 <p >
                   <a href={tracking.url}>{tracking.title}</a>
                 </p>
+                <span>تاریخ ایجاد: {`2022/2/2`}</span>
                 <span>آخرین به روز رسانی: {`2022/2/2`}</span>
                 <span>نوع رهگیری: {TrackingType[tracking.type]}</span>
                 <span>وضعیت موجودی: {`ناموجود`}</span>

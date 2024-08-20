@@ -9,4 +9,10 @@ export type Tracking = {
   url: string;
   type: TrackingType;
   username: string;
+  date_created: number;
+  date_updated: number;
+  date_changed: number;
+  in_stock: boolean;
+  trigger_text: string;
+  time_between_checks: string;
 };
