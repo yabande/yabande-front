@@ -1,4 +1,8 @@
-import { ArrowPathIcon, PencilSquareIcon, TrashIcon } from "@heroicons/react/16/solid";
+import {
+  ArrowPathIcon,
+  PencilSquareIcon,
+  TrashIcon,
+} from "@heroicons/react/16/solid";
 import { useContext, useEffect } from "react";
 import { IMessageState, MessageContext } from "../contexts/MessageContext";
 import {
@@ -30,18 +34,15 @@ function TrackingsList() {
     setTrackings(trackings.filter((tracking) => tracking._id !== id));
     throwNewMessage(`Tracking with ID: ${id} has been deleted.`);
   }
-  // async function checkWatch(id: string) {
-  //   return;
-  // }
   return (
     <div id='trackings-list'>
       <h4>رهگیری ها</h4>
       <ul className='tracking_list'>
-        {trackings.length &&
+        {trackings.length != 0 &&
           trackings.map((tracking) => (
             <li key={tracking._id} className='tracking_item'>
               <div className='flex flex-col gap-3'>
-                <p >
+                <p>
                   <a href={tracking.url}>{tracking.title}</a>
                 </p>
                 <span>تاریخ ایجاد: {`2022/2/2`}</span>
@@ -60,6 +61,8 @@ function TrackingsList() {
               </div>
             </li>
           ))}
+
+          {trackings.length == 0 && <p className="bg-slate-900 px-8 py-2 text-center rounded-md">در حال حاضر موردی یافت نشد!</p>}
       </ul>
     </div>
   );

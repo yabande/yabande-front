@@ -1,3 +1,4 @@
+import { ArrowLeftIcon } from "@heroicons/react/16/solid";
 import axios from "axios";
 import { FormEvent, useContext } from "react";
 import { IMessageState, MessageContext } from "../contexts/MessageContext";
@@ -7,7 +8,6 @@ import {
 } from "../contexts/TrackingsContext";
 import { IUserState, UserContext } from "../contexts/UserContext";
 import { Tracking, TrackingType } from "../utils/types";
-import { ArrowLeftIcon } from "@heroicons/react/16/solid";
 
 function NewTrackingForm() {
   const { user } = useContext(UserContext) as IUserState;
@@ -32,8 +32,8 @@ function NewTrackingForm() {
       date_updated: 0,
       date_changed: 0,
       in_stock: false,
-      trigger_text: 'iddd',
-      time_between_checks: '2H'
+      trigger_text: "iddd",
+      time_between_checks: "2H",
     };
 
     await axios
@@ -54,7 +54,7 @@ function NewTrackingForm() {
   }
   async function showAdvanced() {
     const advancedOptions = document.getElementById(
-      "advancedOptions"
+      "advancedOptions",
     ) as HTMLDivElement;
     advancedOptions.classList.toggle("hidden");
     advancedOptions.classList.toggle("mt-2");
@@ -88,12 +88,14 @@ function NewTrackingForm() {
           />
         </div>
         <div className='flex flex-row items-center gap-8'>
-          <label htmlFor='track_mode' className='font-bold'>روش رهگیری</label>
+          <label htmlFor='track_mode' className='font-bold'>
+            روش رهگیری
+          </label>
           <div className='flex-grow'>
             <select
               id='track_mode'
               name='track_mode'
-              className='bg-slate-700 text-white p-2 rounded-md appearance-none w-full'
+              className='bg-slate-900 text-white p-2 rounded-md appearance-none w-full'
             >
               <option value='Stock'>لطفا نوع رهگیری را انتخاب کنید:</option>
               <option value='Stock'>رهگیری موجودی محصول</option>
@@ -102,28 +104,35 @@ function NewTrackingForm() {
             </select>
           </div>
         </div>
-        <div className='flex flex-col gap-2 cursor-pointer bg-slate-700 p-2 rounded-md' >
-          <div onClick={() => showAdvanced()} className='flex flex-row gap-1 cursor-pointer items-center'>
+        <div className='flex flex-col gap-2 cursor-pointer bg-slate-900 p-2 rounded-md'>
+          <div
+            onClick={() => showAdvanced()}
+            className='flex flex-row gap-1 cursor-pointer items-center'
+          >
             <p>گزینه‌های پیشرفته</p>
             <ArrowLeftIcon className='h-5 w-5' />
           </div>
-          <div className='rounded-md bg-slate-700 p-4 hidden mt-2' id='advancedOptions'>
+          <div
+            className='rounded-md bg-slate-800 p-4 hidden mt-2'
+            id='advancedOptions'
+          >
             <div className='flex flex-col justify-start text-right gap-4'>
-              <p>
+              <p className='flex gap-1 justify-start items-center'>
                 بررسی تغییرات هر{" "}
-                <input type='number' className='h-8 w-16 rounded-md p-2' /> ساعت
+                <input
+                  type='number'
+                  className='h-8 w-16 rounded-md p-2 bg-slate-900'
+                />{" "}
+                ساعت
               </p>
-              <p>
+              <p className='flex gap-1 justify-start items-center'>
                 <input type='checkbox' />
                 ارسال نوتیفیکیشن
               </p>
             </div>
           </div>
         </div>
-        <button
-          type='submit'
-          className='rounded-md bg-blue-500 p-2 text-white'
-        >
+        <button type='submit' className='rounded-md bg-blue-500 p-2 text-white'>
           رهگیری
         </button>
       </div>

@@ -15,7 +15,7 @@ function Dashboard() {
   return (
     <div className='container flex flex-col gap-7'>
       <div className='flex items-center justify-between'>
-        <span>نام کاربری: {localStorage.getItem("username")}</span>
+        <span className="bg-slate-950 p-4 rounded-full border-slate-700 border-2">خوش آمدید {localStorage.getItem("username")}!</span>
         <button
           onClick={handleLogout}
           className='rounded-md bg-red-500 text-white px-4 py-2'
